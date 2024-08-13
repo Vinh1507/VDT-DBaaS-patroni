@@ -1,0 +1,6 @@
+---
+
+- hosts: patroni_cluster
+  become: true
+  roles:
+    - roles/patroni_cluster

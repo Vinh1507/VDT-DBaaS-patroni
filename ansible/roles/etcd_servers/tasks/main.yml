@@ -1,0 +1,29 @@
+---
+- name: Install net-tools
+  ansible.builtin.apt:
+    name: net-tools
+    state: present
+    update_cache: yes
+
+- name: Install etcd
+  ansible.builtin.apt:
+    name: etcd
+    state: present
+    update_cache: yes
+    force: yes
+
+- name: Copy etcd config
+  template:
+    src: etcd.j2
+    dest: /etc/default/etcd
+    mode: 0644
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and start etcd service
+  ansible.builtin.systemd:
+    name: etcd
+    enabled: yes
+    state: started

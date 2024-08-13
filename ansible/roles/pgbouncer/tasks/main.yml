@@ -1,0 +1,49 @@
+- name: Cập nhật cache APT và cài đặt PgBouncer
+  ansible.builtin.apt:
+    name: pgbouncer
+    state: present
+    update_cache: yes
+
+- name: Tạo nhóm 'pgbouncer' nếu chưa tồn tại
+  group:
+    name: "{{ pgbouncer_group }}"
+    state: present
+
+- name: Tạo user và group cho pgbouncer
+  user:
+    name: "{{ pgbouncer_user }}"
+    group: "{{ pgbouncer_group }}"
+    createhome: yes
+
+- name: Tạo thư mục cấu hình PgBouncer
+  ansible.builtin.file:
+    path: "{{ pgbouncer_conf_dir }}"
+    state: directory
+    owner: "{{ pgbouncer_user }}"
+    group: "{{ pgbouncer_group }}"
+    mode: '0755'
+
+- name: Tạo thư mục logs PgBouncer
+  ansible.builtin.file:
+    path: "{{ pgbouncer_log_dir }}"
+    state: directory
+    owner: "{{ pgbouncer_user }}"
+    group: "{{ pgbouncer_group }}"
+    mode: '0755'
+
+- name: Tạo tệp cấu hình PgBouncer
+  ansible.builtin.template:
+    src: pgbouncer.ini.j2
+    dest: "{{ pgbouncer_conf_dir }}/pgbouncer.ini"
+    owner: "{{ pgbouncer_user }}"
+    group: "{{ pgbouncer_group }}"
+    mode: '0644'
+
+- name: Tạo tệp userlist
+  ansible.builtin.template:
+    src: userlist.txt.j2
+    dest: "{{ pgbouncer_conf_dir }}/userlist.txt"
+    owner: "{{ pgbouncer_user }}"
+    group: "{{ pgbouncer_group }}"
+    mode: '0640'
+  notify: restart pgbouncer

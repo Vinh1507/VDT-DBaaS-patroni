@@ -1,0 +1,11 @@
+pgbouncer_user: "pgbouncer"
+pgbouncer_group: "pgbouncer"
+pgbouncer_conf_dir: "/etc/pgbouncer"
+pgbouncer_log_dir: "/var/log/pgbouncer"
+pgbouncer_db_user: "postgres"
+pgbouncer_db_password: "Vinh1507"
+pgbouncer_listen_addr: "*"
+pgbouncer_listen_port: 6432
+
+db_host: 192.168.144.133
+db_port: 5432

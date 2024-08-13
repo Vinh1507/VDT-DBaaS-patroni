@@ -1,0 +1,79 @@
+---
+- name: Install dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: true
+    
+- name: Cài đặt các gói cần thiết
+  apt:
+    name: 
+      - python3-pip
+      - python3-psycopg2
+      - libpq-dev
+      - postgresql
+      - postgresql-client
+    state: present
+    update_cache: yes
+
+- name: Tạo nhóm 'patroni' nếu chưa tồn tại
+  group:
+    name: "{{ patroni_group }}"
+    state: present
+
+- name: Tạo user và group cho Patroni
+  user:
+    name: "{{ patroni_user }}"
+    group: "{{ patroni_group }}"
+    createhome: yes
+
+- name: Cài đặt Patroni bằng pip
+  pip:
+    name: "patroni[etcd]"
+    state: present
+
+- name: Tạo thư mục cho Patroni
+  file:
+    path: "{{ patroni_install_dir }}"
+    state: directory
+    owner: "{{ patroni_user }}"
+    group: "{{ patroni_group }}"
+
+- name: Tạo tệp cấu hình cho Patroni
+  template:
+    src: patroni.yml.j2
+    dest: "{{ patroni_install_dir }}/patroni.yml"
+    owner: "{{ patroni_user }}"
+    group: "{{ patroni_group }}"
+    mode: 0644
+
+- name: Tạo thư mục /data/patroni
+  file:
+    path: /data/patroni
+    state: directory
+    owner: "{{ patroni_user }}"
+    group: "{{ patroni_group }}"
+    mode: '0700'
+    
+- name: Tạo service systemd cho Patroni
+  template:
+    src: patroni.service.j2
+    dest: /etc/systemd/system/patroni.service
+    mode: 0644
+
+- name: Khởi động dịch vụ Patroni
+  systemd:
+    name: patroni
+    state: started
+    enabled: yes 
+
+- name: Kiểm tra trạng thái của dịch vụ Patroni
+  systemd:
+    name: patroni
+    state: started
+  register: patroni_status
