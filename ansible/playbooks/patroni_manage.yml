@@ -4,5 +4,5 @@
   hosts: etcd_servers
   become: yes
   roles:
-    # - roles/etcd_servers
+    - roles/etcd_servers
     - roles/pgbouncer
