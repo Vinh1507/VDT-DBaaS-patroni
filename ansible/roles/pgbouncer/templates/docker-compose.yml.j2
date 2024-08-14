@@ -1,0 +1,12 @@
+services:
+  edoburu_pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: edoburu_pgbouncer
+    volumes:
+      - ./pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./userlist.txt:/etc/pgbouncer/userlist.txt
+    ports:
+      - "6432:6432"
+
+
+  
