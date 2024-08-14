@@ -4,3 +4,8 @@
   become: true
   roles:
     - roles/patroni_cluster
+
+- hosts: etcd_servers
+  become: yes
+  roles:
+    - roles/etcd_servers
