@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:12.4
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=Asia/Ho_Chi_Minh 
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+
+  edoburu_pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: edoburu_pgbouncer
+    volumes:
+      - ./pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./userlist.txt:/etc/pgbouncer/userlist.txt
+    ports:
+      - "6432:6432"
+
+volumes:
+  pgdata:
+
+
+  
