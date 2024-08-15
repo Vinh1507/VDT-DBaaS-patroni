@@ -25,23 +25,26 @@ def run_ansible_playbook(playbook_path, extra_vars=None, inventory_path=None, re
     if remote_user:
         command.extend(["-u", remote_user])
     
+    print(command)
     try:
         result = subprocess.run(command, check=True, text=True, capture_output=True)
         print(result.stdout)
         return {"success": True, "output": result.stdout}
     except subprocess.CalledProcessError as e:
-        return {"success": False, "error": e.stderr}
+        return {"success": False, "error": e}
 
 @app.route('/run_playbook', methods=['POST'])
 def run_playbook():
+    data = request.json
+    print(data)
     playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni_manage.yml'
     inventory_path = '/home/vinh/Documents/postgresql-high-availability/ansible/inventory.ini'
     remote_user = 'simone'
-    extra_vars = {
-        'patroni_primary_host': '192.168.144.130'
-    }    
+    # extra_vars = {
+    #     'patroni_primary_host': '192.168.144.130'
+    # }    
     # playbook_path = data.get('playbook_path')
-    # extra_vars = data.get('extra_vars', {})
+    extra_vars = data.get('extra_vars', {})
     # inventory_path = data.get('inventory_path')
     # remote_user = data.get('remote_user')
 
@@ -55,5 +58,10 @@ def run_playbook():
     else:
         return jsonify(result), 500
 
+@app.route('/logging', methods=['POST'])
+def logging():
+    data = request.json
+    print(data)
+    return jsonify(data), 200
 if __name__ == '__main__':
     app.run(debug=True)
