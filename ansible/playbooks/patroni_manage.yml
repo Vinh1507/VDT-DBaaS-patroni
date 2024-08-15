@@ -1,7 +1,13 @@
 ---
 
-- name: Install etcd on all servers
-  hosts: etcd_servers
+# - name: Install docker on all servers
+#   hosts: etcd_servers
+#   become: yes
+#   roles:
+#     - ../roles/common
+
+- hosts: etcd_servers
   become: yes
   roles:
-    - roles/pgbouncer
+    - ../roles/pgbouncer
+    - ../roles/task-manager

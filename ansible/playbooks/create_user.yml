@@ -1,0 +1,14 @@
+---
+
+- hosts: etcd_servers
+  become: true
+  tasks:
+  - name: update repository index (Ubuntu)
+    apt:
+      update_cache: true
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: etcd_servers
+  become: true
+  roles:
+    - roles/bootstrap

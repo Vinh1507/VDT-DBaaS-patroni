@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  pgbouncer-task-scheduler:
+    build: .
+    environment:
+      - IPS=192.168.144.133,192.168.144.135,192.168.144.136
+      - CONFIG_FILE_PATH=/app/pgbouncer.ini
+      - FLASK_API_URL=https://43da-113-185-52-3.ngrok-free.app/run_playbook
+      - LOGGING_API_URL=https://43da-113-185-52-3.ngrok-free.app/logging
+    volumes:
+      - .:/app
+      -  /vdt_pgbouncer/pgbouncer.ini:/app/pgbouncer.ini
+    restart: always
+    command: ["python3", "scheduler.py"]

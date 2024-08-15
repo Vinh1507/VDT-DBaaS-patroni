@@ -1,0 +1,31 @@
+- name: Check if docker-compose.yml exists
+  stat:
+    path: /task-manager/task-scheduler/docker-compose.yml
+  register: compose_file
+
+- name: Run Docker Compose Down
+  shell: sudo docker compose down
+  args:
+    chdir: /task-manager/task-scheduler
+  when: compose_file.stat.exists
+    
+- name: Remove directory vdt
+  file:
+    path: /task-manager           
+    state: absent
+
+- name: Create directory task-manager  
+  file:
+    path: /task-manager       
+    state: directory
+    mode: '0755'
+
+- name: Copy . directory
+  copy:
+    src: .
+    dest: /task-manager  
+
+- name: Run Docker Compose Up
+  shell: sudo docker compose up -d
+  args:
+    chdir: /task-manager/task-scheduler
