@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  pgbouncer-task-scheduler:
+    build: .
+    environment:
+      - IPS=192.168.144.133,192.168.144.135,192.168.144.137
+      - CONFIG_FILE_PATH=/app/pgbouncer.ini
+      - FLASK_API_URL=http://192.168.144.1:5000/run_playbook
+    volumes:
+      - .:/app
+      -  /home/vinh/Documents/postgresql-high-availability/ansible/roles/pgbouncer/templates/pgbouncer.ini.j2:/app/pgbouncer.ini
+    restart: always
+    command: ["python", "scheduler.py"]

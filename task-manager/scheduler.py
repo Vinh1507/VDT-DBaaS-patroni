@@ -1,19 +1,20 @@
+import os
+from dotenv import load_dotenv
 import requests
 import time
 import json
 import re
 
-# Danh sách các endpoint
-IPs = [
-    '192.168.144.133',
-    '192.168.144.135',
-    '192.168.144.136',
-]
-PORT = 8008
-CONFIG_FILE_PATH = './pgbouncer.ini'
+# Load environment variables from .env file
+load_dotenv()
 
+# Load configurations from environment variables
+IPs = os.getenv('IPS', '192.168.144.133,192.168.144.135,192.168.144.136').split(',')
+PORT = int(os.getenv('PORT', 8008))
+CONFIG_FILE_PATH = os.getenv('CONFIG_FILE_PATH', './pgbouncer.ini')
+print(CONFIG_FILE_PATH)
 
-def get_pgbouncer_db_config (): 
+def get_pgbouncer_db_config(): 
     with open(CONFIG_FILE_PATH, 'r') as file:
         text = file.read()
 
@@ -25,13 +26,15 @@ def get_pgbouncer_db_config ():
         return extracted_text
     else:
         return None
-    
-def get_pgbouncer_primary_ip ():
+
+def get_pgbouncer_primary_ip():
     connection_string = get_pgbouncer_db_config()
+
+    print(connection_string)
 
     if connection_string is None:
         return None
-    
+
     host_match = re.search(r'host=(\d+\.\d+\.\d+\.\d+)', connection_string)
 
     if host_match:
@@ -40,8 +43,41 @@ def get_pgbouncer_primary_ip ():
     else:
         return None
 
+def update_cluster_state(patroni_primary_host):
+    # Define the URL and headers
+    try:
+        url = os.getenv('FLASK_API_URL')
+        headers = {'Content-Type': 'application/json'}
+
+        # Define the data to be sent in the request
+        data = {
+            "extra_vars": {
+                "patroni_primary_host": patroni_primary_host
+            }
+        }
+
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+
+        # Print the response from the server
+        if response.status_code == 200:
+            print("Success:", response.json())
+        else:
+            print("Failed:", response.status_code, response.text)
+    except e:
+        print(e)
+
+def send_logging():
+    url = os.getenv('LOGGING_API_URL')
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "logging": {
+            "status": 'running'
+        }
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+
 while True:
-    pgbouncer_configered_primary_ip = get_pgbouncer_primary_ip()
+    pgbouncer_configured_primary_ip = get_pgbouncer_primary_ip()
     actual_primary_ip = None
     for IP in IPs:
         endpoint = f"http://{IP}:{PORT}/"
@@ -51,10 +87,15 @@ while True:
             status = response.status_code
             if status == 200 and data['role'] == 'master':
                 actual_primary_ip = IP
-            # print(f"Response from {endpoint}: {response.status_code} - {response.text}")
         except requests.exceptions.RequestException as e:
             print(f"FAILOVER: {IP}")
-        
+
     print("ACTUAL PRIMARY IP:", actual_primary_ip)
-    print("CONFIGERED PRIMARY IP:", pgbouncer_configered_primary_ip)
-    time.sleep(5)
+    print("CONFIGURED PRIMARY IP:", pgbouncer_configured_primary_ip)
+
+    if actual_primary_ip and actual_primary_ip != pgbouncer_configured_primary_ip:
+        update_cluster_state(actual_primary_ip)
+
+    send_logging()
+    time.sleep(int(os.getenv('CHECK_INTERVAL', 5)))
+
