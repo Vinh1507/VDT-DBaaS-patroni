@@ -3,5 +3,5 @@ ETCD_LISTEN_CLIENT_URLS="http://localhost:2379,http://{{ inventory_hostname }}:2
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://{{ inventory_hostname }}:2380"
 ETCD_INITIAL_CLUSTER="default=http://{{ inventory_hostname }}:2380,"
 ETCD_ADVERTISE_CLIENT_URLS="http://{{ inventory_hostname }}:2379"
-ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster-2"
+ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
 ETCD_INITIAL_CLUSTER_STATE="new"
