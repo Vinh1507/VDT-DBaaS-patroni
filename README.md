@@ -613,6 +613,7 @@ frontend stats
 
 listen postgres
     bind *:5000
+    mode tcp
     option httpchk
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
