@@ -9,6 +9,10 @@ import requests
 import json
 import subprocess
 
+
+# Load environment variables from .env file
+load_dotenv()
+
 @dramatiq.actor
 def print_message(message):
     print(f"Received message: {message}")
@@ -23,6 +27,8 @@ def run_ansible_playbook(playbook_path, extra_vars=None, inventory_path=None, re
     :param extra_vars: Dictionary of extra variables to pass to the playbook.
     :param inventory_path: Path to the inventory file.
     :param remote_user: Remote user to use for the playbook.
+    :param tags: Run only playbook match these tags
+    :param limit: Run only playbook match this server name
     :return: Dictionary with the result of the execution.
     """
     command = ["ansible-playbook", playbook_path]
@@ -64,9 +70,6 @@ def restart_patroni_node(IP):
 @dramatiq.actor
 def check_patroni_schedule():
     try:
-        # Load environment variables from .env file
-        load_dotenv()
-
         # Load configurations from environment variables
         IPs = os.getenv('IPS').split(',')
         PORT = int(os.getenv('PORT', 8008))

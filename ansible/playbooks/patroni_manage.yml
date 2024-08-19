@@ -1,14 +1,14 @@
 ---
 
-# - name: Install on all servers
-#   hosts: manager_servers
-#   become: yes
-#   roles:
-#     - ../roles/common
+- name: Install on all servers
+  hosts: manager_servers
+  become: yes
+  roles:
+    - ../roles/common
 
 - hosts: manager_servers
   become: yes
   roles:
-    # - ../roles/haproxy
+    - ../roles/haproxy
     - ../roles/pgbouncer
-    # - ../roles/task-manager
+    - ../roles/task-manager
