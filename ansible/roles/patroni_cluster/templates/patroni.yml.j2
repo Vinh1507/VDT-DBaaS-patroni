@@ -44,6 +44,8 @@ postgresql:
   data_dir: /data/patroni
   bin_dir: /usr/lib/postgresql/12/bin
   pgpass: /tmp/pgpass
+  pg_hba:
+    - host all all 192.168.144.146/24 md5
   authentication:
     replication:
       username: replicator

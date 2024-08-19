@@ -1,13 +1,14 @@
 ---
 
-# - name: Install docker on all servers
-#   hosts: etcd_servers
+# - name: Install on all servers
+#   hosts: manager_servers
 #   become: yes
 #   roles:
 #     - ../roles/common
 
-- hosts: etcd_servers
+- hosts: manager_servers
   become: yes
   roles:
+    # - ../roles/haproxy
     - ../roles/pgbouncer
-    - ../roles/task-manager
+    # - ../roles/task-manager

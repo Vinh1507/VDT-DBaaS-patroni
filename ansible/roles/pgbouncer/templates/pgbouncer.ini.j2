@@ -1,6 +1,6 @@
 [databases]
 ;; [config cluster: begin]
-mydb = host={{ patroni_primary_host }} dbname=postgres auth_user=postgres pool_mode=session  pool_size=10
+mydb = host={{ patroni_primary_host }} port={{ patroni_primary_port }} dbname=postgres auth_user=postgres pool_mode=session  pool_size=10
 ;; [config cluster: end]
 [pgbouncer]
 listen_addr = *

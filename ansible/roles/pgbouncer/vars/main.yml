@@ -7,5 +7,5 @@ pgbouncer_db_user: "postgres"
 pgbouncer_listen_addr: "*"
 pgbouncer_listen_port: 6432
 
-patroni_primary_host: 192.168.144.135
-patroni_primary_port: 5432
+patroni_primary_host: 192.168.144.146
+patroni_primary_port: 5000
