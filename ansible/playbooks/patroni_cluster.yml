@@ -6,6 +6,7 @@
     - patroni
   roles:
     - ../roles/patroni_cluster
+    - ../roles/monitoring
 
 - hosts: manager_servers
   become: yes

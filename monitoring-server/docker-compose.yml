@@ -1,0 +1,52 @@
+---
+version: '3'
+
+
+services:
+  prometheus:
+    image: docker.io/prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command: "--config.file=/etc/prometheus/prometheus.yaml"
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./config/rules:/etc/prometheus/rules
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+
+  grafana:
+    image: docker.io/grafana/grafana-oss:10.4.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager:/config
+      - ./alertmanager-data:/data
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+
+  # postgres_exporter_node1:
+  #   image: quay.io/prometheuscommunity/postgres-exporter
+  #   container_name: postgres_exporter_node1
+  #   environment:
+  #     DATA_SOURCE_URI: "192.168.144.133:5432/postgres?sslmode=disable"
+  #     DATA_SOURCE_USER: postgres
+  #     DATA_SOURCE_PASS: Vinh1507
+  #   ports:
+  #     - "9187:9187"
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  alertmanager-data:
