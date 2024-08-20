@@ -8,10 +8,14 @@ from dotenv import load_dotenv
 import requests
 import json
 import subprocess
+import redis
+from datetime import datetime
+
 
 
 # Load environment variables from .env file
 load_dotenv()
+client = redis.Redis(host='localhost', port=6379, db=0)
 
 @dramatiq.actor
 def print_message(message):
@@ -59,13 +63,17 @@ def run_ansible_playbook(playbook_path, extra_vars=None, inventory_path=None, re
         return {"success": False, "error": e}
 
 @dramatiq.actor
-def restart_patroni_node(IP):
+def restart_patroni_node(IPs):
+    if client.get('is_running_ansible') == b'1':
+        return 
     playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni_cluster.yml'
     inventory_path = '/home/vinh/Documents/postgresql-high-availability/ansible/inventory.ini'
     remote_user = 'simone'
     tags = ["patroni"]
-    limit = IP
+    limit = IPs
+    client.set('is_running_ansible', '1')   
     run_ansible_playbook(playbook_path, None, inventory_path, remote_user, tags, limit)
+    client.set('is_running_ansible', '0')
 
 @dramatiq.actor
 def check_patroni_schedule():
@@ -73,20 +81,25 @@ def check_patroni_schedule():
         # Load configurations from environment variables
         IPs = os.getenv('IPS').split(',')
         PORT = int(os.getenv('PORT', 8008))
-
+        failover_IPs = []
+        current_time = datetime.now()
+        print("[%s]", current_time)
         for IP in IPs:
             endpoint = f"http://{IP}:{PORT}/"
             try:
                 response = requests.get(endpoint)
                 data = json.loads(response.text)
                 if data is None or data['state'] == 'stopped' :
-                    restart_patroni_node.send(IP)
+                    failover_IPs.append(IP)
                     print(f"STOPPED: {IP}")
                 else:
                     print(f"RUNNING: {IP}")
             except requests.exceptions.RequestException as e:
                 print(f"FAILOVER: {IP}")
-                restart_patroni_node.send(IP)
+                failover_IPs.append(IP)
+                
+        if len(failover_IPs) > 0:
+            restart_patroni_node.send(",".join(failover_IPs))
         print("================================")
     except Exception as e:
         print("Server Error: ", e)
