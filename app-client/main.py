@@ -52,7 +52,6 @@ try:
         try:
             # Increment id counter
             id_counter += 1
-            print('start')
             
             # Database connection settings
             conn = psycopg2.connect(
@@ -64,10 +63,8 @@ try:
             )
             cur = conn.cursor()
 
-            print('end')
             # Insert a new record
             insert_record(cur, conn, id_counter)
-            
 
             if timer % select_interval == 0:
                 # Select and print the latest records

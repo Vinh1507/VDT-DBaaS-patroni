@@ -11,4 +11,3 @@
   roles:
     - ../roles/haproxy
     - ../roles/pgbouncer
-    - ../roles/task-manager
