@@ -1,5 +1,10 @@
 # Báo cáo tiến độ #2
 
+## Mục tiêu:
+
+- Triển khai tối thiểu down-time
+- Sử dụng haproxy đứng sau PgBouncer, đứng trước cluster, nhằm mục đích nhanh chóng xử lý khi có failover/switchover
+- Sử dụng Apscheduler, Dramatiq thực hiện cron job phát hiện down node, tiến hành gọi vào Ansible để restart service
 
 ### Mô hình triển khai
 ![alt text](../images/report-2/architecture.png)
