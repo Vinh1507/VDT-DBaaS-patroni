@@ -1,0 +1,7 @@
+psycopg2-binary
+behave
+coverage
+flake8>=3.0.0
+pytest-cov
+pytest
+setuptools
