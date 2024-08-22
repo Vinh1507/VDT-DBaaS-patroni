@@ -1,0 +1,12 @@
+[template]
+src = "haproxy.tmpl"
+prefix = "/service/demo7"
+dest = "/etc/haproxy/haproxy.cfg"
+keys = [
+  "/",
+]
+
+check_cmd = "/usr/local/sbin/haproxy -c -f {{ .src }}"
+reload_cmd = "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)"
+
+mode = "0644"
