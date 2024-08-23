@@ -4,6 +4,7 @@
 
 - Đóng gói Patroni, customize config khi tạo container Patroni
 - Image patroni đang đóng gói tất cả service liên quan (etcd, haproxy) nên size image khá nặng, cần tách riêng chỉ để lại patroni service trong image.
+- Service haproxy cập nhật config khi có thay đổi về member của etcd (thêm/bớt) mà không restart
 ## Mục tiêu đóng gói
 
 [Docker image của Patroni](https://github.com/patroni/patroni/tree/master/docker)
@@ -130,3 +131,10 @@ Kết quả: Kết nối bình thường
 +----------+------------+---------+-----------+----+-----------+
 ```
 ### 3. Haproxy
+
+Khi có yêu cầu thêm/bớt số lượng node, Haproxy cần được cấu hình nhưng không được restart, vì nếu restart sẽ tạo ra 1 khoảng thời gian downtime cho hệ thống.
+
+Haproxy chạy tiến trình và lưu tiến trình đó vào /var/run/haproxy.pid
+
+Sử dụng Haproxy kết hợp với confd, khi có thay đổi về cấu hình từng node (thêm/bớt số lượng node), Confd sẽ interval 10s (theo cấu hình hiện tại) gửi yêu cầu lấy các key-value cần thiết từ server etcd và chạy lại tiến trình Haproxy được lưu trong /var/run/haproxy.pid sau đó ghi đè lại vào /var/run/haproxy.pid. Do đó Haproxy sẽ được cập nhật mà không bị restart lại. 
+
