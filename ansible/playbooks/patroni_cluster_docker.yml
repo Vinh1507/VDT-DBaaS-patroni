@@ -1,0 +1,8 @@
+---
+
+- hosts: patroni_cluster
+  become: true
+  tags:
+    - patroni
+  roles:
+    - ../roles/patroni_cluster_docker
