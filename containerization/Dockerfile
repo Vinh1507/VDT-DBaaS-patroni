@@ -148,8 +148,8 @@ ENV PGDATA=$PGDATA PATH=$PATH:$PGBIN
 ENV ETCDCTL_API=3
 
 COPY patroni /patroni/
-COPY extras/confd/conf.d/haproxy.toml /etc/confd/conf.d/
-COPY extras/confd/templates/haproxy.tmpl /etc/confd/templates/
+# COPY extras/confd/conf.d/haproxy.toml /etc/confd/conf.d/
+# COPY extras/confd/templates/haproxy.tmpl /etc/confd/templates/
 COPY patroni*.py docker/entrypoint.sh /
 COPY postgres?.yml $PGHOME/
 
