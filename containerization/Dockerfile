@@ -46,7 +46,8 @@ RUN set -ex \
     && ln -s ../../postgres0.yml "$PGHOME/.config/patroni/patronictl.yaml" \
     && ln -s /patronictl.py /usr/local/bin/patronictl \
     && sed -i "s|/var/lib/postgresql.*|$PGHOME:/bin/bash|" /etc/passwd \
-    && chown -R postgres:postgres /var/log \
+    && chown -R postgres:postgres /var/log \ 
+    && apt-get install pgbackrest -y \
 \
     # Download etcd
 #     && curl -sL "https://github.com/coreos/etcd/releases/download/v$ETCDVERSION/etcd-v$ETCDVERSION-linux-$(dpkg --print-architecture).tar.gz" \
