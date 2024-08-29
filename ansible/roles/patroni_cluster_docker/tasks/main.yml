@@ -1,4 +1,3 @@
-
 - name: Check if docker-compose.yml exists
   stat:
     path: /patroni_docker/docker-compose.yml
@@ -19,6 +18,17 @@
   file:
     path: /patroni_docker       
     state: directory
+    mode: '0755'
+
+- name: Copy pgbackrest.conf
+  copy:
+    src: pgbackrest.conf
+    dest: /patroni_docker
+
+- name: Copy custom_bootstrap.sh
+  copy:
+    src: custom_bootstrap.sh
+    dest: /patroni_docker
     mode: '0755'
 
 - name: Copy docker directory
