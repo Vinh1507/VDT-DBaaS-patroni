@@ -138,3 +138,74 @@ Haproxy chạy tiến trình và lưu tiến trình đó vào /var/run/haproxy.p
 
 Sử dụng Haproxy kết hợp với confd, khi có thay đổi về cấu hình từng node (thêm/bớt số lượng node), Confd sẽ interval 10s (theo cấu hình hiện tại) gửi yêu cầu lấy các key-value cần thiết từ server etcd và chạy lại tiến trình Haproxy được lưu trong /var/run/haproxy.pid sau đó ghi đè lại vào /var/run/haproxy.pid. Do đó Haproxy sẽ được cập nhật mà không bị restart lại. 
 
+```shell
+vinh@vinhbh-20:~$ etcdctl get "/service/demo7" --prefix
+/service/demo7/config
+{"ttl":30,"loop_wait":10,"retry_timeout":10,"maximum_lag_on_failover":1048576,"postgresql":{"use_pg_rewind":true,"pg_hba":["local all all trust","host replication replicator all md5","host all all all md5"],"parameters":{"max_connections":100}}}
+/service/demo7/initialize
+7406229148830257290
+/service/demo7/leader
+node1
+/service/demo7/members/node1
+{"conn_url":"postgres://192.168.144.133:5432/postgres","api_url":"http://192.168.144.133:8008/patroni","state":"running","role":"master","version":"3.3.2","xlog_location":67108864,"timeline":1}
+/service/demo7/members/node2
+{"conn_url":"postgres://192.168.144.135:5432/postgres","api_url":"http://192.168.144.135:8008/patroni","state":"running","role":"replica","version":"3.3.2","xlog_location":67108864,"replication_state":"streaming","timeline":1}
+/service/demo7/members/node3
+{"conn_url":"postgres://192.168.144.136:5432/postgres","api_url":"http://192.168.144.136:8008/patroni","state":"running","role":"replica","version":"3.3.2","xlog_location":67108864,"replication_state":"streaming","timeline":1}
+/service/demo7/status
+{"optime":67108864}
+```
+
+![alt text](../images/report-3/haproxy-3-node.png)
+
+
+Thêm node4 vào cluster
+
+```shell
+vinh@vinhbh-20:~$ etcdctl get "/service/demo7" --prefix
+/service/demo7/config
+{"ttl":30,"loop_wait":10,"retry_timeout":10,"maximum_lag_on_failover":1048576,"postgresql":{"use_pg_rewind":true,"pg_hba":["local all all trust","host replication replicator all md5","host all all all md5"],"parameters":{"max_connections":100}}}
+/service/demo7/initialize
+7406229148830257290
+/service/demo7/leader
+node1
+/service/demo7/members/node1
+{"conn_url":"postgres://192.168.144.133:5432/postgres","api_url":"http://192.168.144.133:8008/patroni","state":"running","role":"master","version":"3.3.2","xlog_location":100663392,"timeline":1}
+/service/demo7/members/node2
+{"conn_url":"postgres://192.168.144.135:5432/postgres","api_url":"http://192.168.144.135:8008/patroni","state":"running","role":"replica","version":"3.3.2","xlog_location":100663392,"replication_state":"streaming","timeline":1}
+/service/demo7/members/node3
+{"conn_url":"postgres://192.168.144.136:5432/postgres","api_url":"http://192.168.144.136:8008/patroni","state":"running","role":"replica","version":"3.3.2","xlog_location":100663392,"replication_state":"streaming","timeline":1}
+/service/demo7/members/node4
+{"conn_url":"postgres://192.168.144.149:5432/postgres","api_url":"http://192.168.144.149:8008/patroni","state":"running","role":"replica","version":"3.3.2","xlog_location":100663392,"replication_state":"streaming","timeline":1}
+/service/demo7/status
+{"optime":100663392}
+```
+
+Haproxy tự động update fiel config và chạy lại tiến trình.
+
+![alt text](../images/report-3/haproxy-4-node.png)
+
+Việc tự động này sẽ tăng khả năng auto scaling cho hệ thống, tương tự PgBouncer cũng sẽ sử dụng confd để tự động cập nhật cấu hình.
+
+### 4. Tách riêng Patroni
+
+Khi triển khai patroni, cần sửa đổi 2 endpoint kết nối postgresql và restapi, trong đó:
+
+- Kết nối postgresql để các node replica có thể đồng bộ dữ liệu, nên endpoint này cũng cần được truy cập từ tất cả các node patroni
+- Kết nối restapi để các node patroni có thể monitoring lẫn nhau, nên endpoint này cũng cần được truy cập từ tất cả các node patroni
+
+```
+PATRONI_RESTAPI_USERNAME=admin
+PATRONI_RESTAPI_PASSWORD=admin
+PATRONI_SUPERUSER_USERNAME=postgres
+PATRONI_SUPERUSER_PASSWORD=some-password
+PATRONI_REPLICATION_USERNAME=replicator
+PATRONI_REPLICATION_PASSWORD=replicate
+PATRONI_admin_PASSWORD=admin
+PATRONI_admin_OPTIONS=createdb,createrole
+PATRONI_RESTAPI_CONNECT_ADDRESS={{ hostvars[inventory_hostname]['ansible_host'] }}:8008
+PATRONI_POSTGRESQL_CONNECT_ADDRESS={{ hostvars[inventory_hostname]['ansible_host'] }}:5432
+```
+
+Hiện tại, chạy Patroni trong docker container nhưng endpoint có IP là IP của VM (ansible_host) và sẽ mount 2 port 8008 và 5432 vào trong container, vì vậy khi gọi vào 2 endpoint trên sẽ trỏ đến Patroni chạy trong container
+
