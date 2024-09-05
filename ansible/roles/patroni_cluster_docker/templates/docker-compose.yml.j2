@@ -20,8 +20,7 @@ services:
             - 5432:5432
             - 8008:8008
         volumes:
-            - /patroni_docker/postgres.yml:/home/postgres/postgres.yml
-            - /patroni_docker/postgres.yml:/home/postgres/postgres.yml
+            - /patroni_docker/patroni.yml:/home/postgres/patroni.yml
             - /patroni_docker/pgbackrest.conf:/etc/pgbackrest.conf
             - /patroni_docker/custom_bootstrap.sh:/etc/custom_bootstrap.sh
             - pgbackrest_data:/var/lib/pgbackrest

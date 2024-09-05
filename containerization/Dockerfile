@@ -157,20 +157,14 @@ COPY postgres?.yml $PGHOME/
 WORKDIR $PGHOME
 
 RUN sed -i 's/env python/&3/' /patroni*.py \
-    # "fix" patroni configs
-    && sed -i 's/^  listen: 127.0.0.1/  listen: 0.0.0.0/' postgres?.yml \
-    && sed -i "s|^\(  data_dir: \).*|\1$PGDATA|" postgres?.yml \
-    && sed -i "s|^#\(  bin_dir: \).*|\1$PGBIN|" postgres?.yml \
-    && sed -i 's/^  - encoding: UTF8/  - locale: en_US.UTF-8\n&/' postgres?.yml \
-    && sed -i 's/^\(scope\|name\|etcd\|  host\|  authentication\|  connect_address\|  parameters\):/#&/' postgres?.yml \
-    && sed -i 's/^    \(replication\|superuser\|rewind\|unix_socket_directories\|\(\(  \)\{0,1\}\(username\|password\)\)\):/#&/' postgres?.yml \
-    && sed -i 's/^      parameters:/&\n        max_connections: 100/'  postgres?.yml \
-    && sed -i 's/^      pg_hba:/&\n      - local all all trust/' postgres?.yml \
-    && sed -i 's/^\(.*\) \(.*\) md5/\1 all md5/' postgres?.yml \
     && if [ "$COMPRESS" = "true" ]; then chmod u+s /usr/bin/sudo; fi \
     && chmod +s /bin/ping \
     && chown -R postgres:postgres "$PGHOME" /run /etc/haproxy
 
 USER postgres
 
-ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+# Set dumb-init as the entrypoint
+ENTRYPOINT ["dumb-init", "python3", "/patroni.py"]
+
+# Set the default argument
+CMD ["postgres0.yml"]

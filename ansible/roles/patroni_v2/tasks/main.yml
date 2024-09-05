@@ -1,0 +1,52 @@
+- name: Check if docker-compose.yml exists
+  stat:
+    path: /patroni/docker-compose.yml
+  register: compose_file
+
+- name: Run Docker Compose Down
+  shell: sudo docker compose down
+  args:
+    chdir: /patroni
+  when: compose_file.stat.exists
+    
+- name: Remove directory patroni
+  file:
+    path: /patroni           
+    state: absent
+
+- name: Create directory patroni  
+  file:
+    path: /patroni       
+    state: directory
+    mode: '0755'
+
+- name: Copy pgbackrest.conf
+  copy:
+    src: pgbackrest.conf
+    dest: /patroni
+
+- name: Copy custom_bootstrap.sh
+  copy:
+    src: custom_bootstrap.sh
+    dest: /patroni
+    mode: '0755'
+
+- name: Copy Dockerfile
+  copy:
+    src: Dockerfile
+    dest: /patroni  
+    
+- name: Render Docker Compose template
+  template:
+    src: docker-compose.yml.j2
+    dest: /patroni/docker-compose.yml
+
+- name: Render config template
+  template:
+    src: patroni.yml.j2
+    dest: /patroni/patroni.yml
+
+- name: Run Docker Compose Up
+  shell: sudo docker compose up -d
+  args:
+    chdir: /patroni
