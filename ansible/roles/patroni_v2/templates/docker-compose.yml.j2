@@ -14,12 +14,16 @@ services:
     {{ hostvars[inventory_hostname]['name'] }}:
         image: {{ PATRONI_CLUSTER_IMAGE }}
         hostname: {{ hostvars[inventory_hostname]['name'] }}
-        container_name: demo2-{{ hostvars[inventory_hostname]['name'] }}
+        container_name: demo-{{ hostvars[inventory_hostname]['name'] }}
         ports:
             - 5432:5432
             - 8008:8008
         volumes:
-            - /patroni/patroni.yml:/home/postgres/patroni.yml
+            - /patroni/postgres0.yml:/home/postgres/postgres0.yml
             - /patroni/pgbackrest.conf:/etc/pgbackrest.conf
             - /patroni/custom_bootstrap.sh:/etc/custom_bootstrap.sh
-        command: ["patroni.yml"]
+        command: ["postgres0.yml"]
+        environment: 
+            ETCDCTL_ENDPOINTS: http://192.168.144.146:2379
+            PATRONI_ETCD3_HOSTS: "'192.168.144.146:2379'"
+            PATRONI_SCOPE: test70

@@ -44,7 +44,7 @@
 - name: Render config template
   template:
     src: patroni.yml.j2
-    dest: /patroni/patroni.yml
+    dest: /patroni/postgres0.yml
 
 - name: Run Docker Compose Up
   shell: sudo docker compose up -d
