@@ -28,3 +28,15 @@
 - log sequence number
 - backup stdin.out.err streams
 
+![alt text](../images/report-5/architecture.png)
+
+Các thành phần của kiến trúc:
+
+- API Management: Dịch vụ API quản lý thông tin tài nguyên được cấp phát cho khách hàng, cung cấp một số thôn tin như: thông tin về cụm database, trạng thái healthcheck các node trong cụm, ...
+
+- DB Management: Dịch vụ database lưu thông tin dữ liệu cho API Management.
+
+- Promethues, grafana: Dịch vụ monitoring trạng thái của cụm DB như quan sát RAM, CPU, và các metrics được patroni cung cấp (qua endpoint /metrics của patroni)
+ 
+- confd bên trong haproxy; dịch vụ liên tục cập nhật thông tin các node từ etcd, load lại config haproxy mà không gây gián đoạn về dịch vụ haproxy
+
