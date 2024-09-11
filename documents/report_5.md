@@ -28,7 +28,7 @@
 - log sequence number
 - backup stdin.out.err streams
 
-![alt text](../images/report-5/architecture.png)
+![alt text](../images/report-5/architecture_v2.png)
 
 Các thành phần của kiến trúc:
 
@@ -40,3 +40,20 @@ Các thành phần của kiến trúc:
  
 - confd bên trong haproxy; dịch vụ liên tục cập nhật thông tin các node từ etcd, load lại config haproxy mà không gây gián đoạn về dịch vụ haproxy
 
+
+## API Service
+- Customer:
+[GET] /users/:userId 
+[POST] /users
+[PUT] /users
+[DELETE] /users
+
+- Patroni cluster
+[GET] /clusters/:clusterId
+[POST] /clusters/:clusterId
+[PUT] /clusters/:clusterId
+[DELETE] /clusters/:clusterId
+
+- Patroni features
+[POST] /clusters/:clusterId/failover
+[POST] /clusters/:clusterId/switchover
