@@ -1,6 +1,6 @@
 [template]
 src = "haproxy.tmpl"
-prefix = "/service/test20"
+prefix = "/service/demo02"
 dest = "/etc/haproxy/haproxy.cfg"
 keys = [
   "/",
