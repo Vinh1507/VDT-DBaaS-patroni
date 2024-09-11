@@ -9,3 +9,4 @@
   roles:
     # - ../roles/common
     - ../roles/patroni_v2
+    - ../roles/pgbouncer

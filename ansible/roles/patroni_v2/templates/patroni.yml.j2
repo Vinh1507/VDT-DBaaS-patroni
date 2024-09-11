@@ -75,6 +75,7 @@ bootstrap:
       parameters:
 #        wal_level: hot_standby
 #        hot_standby: "on"
+        password_encryption: md5
         max_connections: 100
         archive_mode: 'on'
         archive_command: pgbackrest --stanza=demo2_1 archive-push %p
@@ -127,7 +128,7 @@ postgresql:
 
 #  proxy_address: 127.0.0.1:5433  # The address of connection pool (e.g., pgbouncer) running next to Patroni/Postgres. Only for service discovery.
   data_dir: {{ PATRONI_POSTGRESQL_DATA_DIR }}
-#  bin_dir:
+  #  bin_dir:
 #  config_dir:
   pgpass: /tmp/pgpass0
   authentication:
@@ -146,7 +147,7 @@ postgresql:
     # Fully qualified kerberos ticket file for the running user
     # same as KRB5CCNAME used by the GSS
 #   krb_server_keyfile: /var/spool/keytabs/postgres
-    unix_socket_directories: '..'  # parent directory of data_dir
+    # unix_socket_directories: '..'  # parent directory of data_dir
   # Additional fencing script executed after acquiring the leader lock but before promoting the replica
   #pre_promote: /path/to/pre_promote.sh
 

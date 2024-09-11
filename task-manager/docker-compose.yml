@@ -27,7 +27,6 @@ services:
     command: ["sh", "-c", "while ! nc -z rabbitmq 5672; do sleep 1; done; python scheduler.py"]
     environment:
       - IPS=192.168.144.133,192.168.144.135,192.168.144.137
-      - FLASK_API_URL=http://192.168.144.1:5000/run_playbook
     depends_on:
       rabbitmq:
         condition: service_healthy

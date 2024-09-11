@@ -1,7 +1,0 @@
-[backend]
-# Chọn backend etcd
-[backend.etcd]
-# Địa chỉ của server etcd
-endpoints = ["http://192.168.144.146:2379"]
-# API version (v3 cho etcd v3)
-api_version = "v3"
