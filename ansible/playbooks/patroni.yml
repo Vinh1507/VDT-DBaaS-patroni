@@ -1,0 +1,14 @@
+---
+
+
+
+- hosts: patroni_cluster
+  become: true
+  tags:
+    - patroni
+  roles:
+    # - ../roles/common
+    - ../roles/patroni
+    - ../roles/pgbouncer
+    - ../roles/monitoring
+    

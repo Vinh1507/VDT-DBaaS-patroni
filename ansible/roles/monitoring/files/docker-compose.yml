@@ -5,10 +5,9 @@ services:
     image: quay.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
     environment:
-      # DATA_SOURCE_NAME: "postgresql://postgres:Vinh1507@localhost:5432/postgres"
       DATA_SOURCE_URI: "localhost:5432/postgres?sslmode=disable"
       DATA_SOURCE_USER: postgres
-      DATA_SOURCE_PASS: Vinh1507
+      DATA_SOURCE_PASS: postgres
     ports:
       - "9187:9187"
 

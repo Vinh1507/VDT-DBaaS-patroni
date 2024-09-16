@@ -6,9 +6,6 @@
     + Nghiên cứu các vấn đề gặp phải khi backup restore
     + Cài đặt pgbackrest, PITR
 
-- WAL:
-    + Nghiên cứu WAL, rotate, mối quan hệ, Postgres xử lý như thế nào
-
 
 ![alt text](../images/report-4/pgbackrest.png)
 
@@ -130,8 +127,6 @@ Nếu trước đó, cluster chưa được cấu hình archive backup khi cấu
 
 #### Chú ý không dùng cách edit file config sau đó reload, cách này không dùng được cho những cấu hình trong section bootstrap
 
-Nếu chạy edit-config thế này thì khó tự động, khả năng lúc cấu hình bootstrap sẽ cấu hình archive_command luôn, còn archive_mode: "off"
-Cần edit-config thì dùng sed file
 
 ```shell
 patronictl -c /etc/patroni.yml edit-config

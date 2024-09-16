@@ -1,0 +1,15 @@
+- name: Check if docker-compose.yml exists
+  stat:
+    path: /patroni/docker-compose.yml
+  register: compose_file
+
+- name: Run Docker Compose Down
+  shell: sudo docker compose down
+  args:
+    chdir: /patroni
+  when: compose_file.stat.exists
+    
+- name: Remove directory patroni
+  file:
+    path: /patroni           
+    state: absent

@@ -16,6 +16,11 @@ from datetime import datetime
 # Load environment variables from .env file
 load_dotenv()
 client = redis.Redis(host='localhost', port=6379, db=0)
+playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni.yml'
+inventory_path = '/home/vinh/Documents/postgresql-high-availability/ansible/inventory.ini'
+remote_user = 'simone'
+tags = ["patroni"]
+patroni_scope = os.getenv('PATRONI_SCOPE')
 
 @dramatiq.actor
 def print_message(message):
@@ -66,17 +71,17 @@ def run_ansible_playbook(playbook_path, extra_vars=None, inventory_path=None, re
 def restart_patroni_node(IPs):
     if client.get('is_running_ansible') == b'1':
         return 
-    playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni_cluster.yml'
-    inventory_path = '/home/vinh/Documents/postgresql-high-availability/ansible/inventory.ini'
-    remote_user = 'simone'
-    tags = ["patroni"]
     limit = IPs
     client.set('is_running_ansible', '1')   
-    run_ansible_playbook(playbook_path, None, inventory_path, remote_user, tags, limit)
+    vars = {
+        'PATRONI_SCOPE': patroni_scope,
+    }
+    run_ansible_playbook(playbook_path, vars, inventory_path, remote_user, tags, limit)
     client.set('is_running_ansible', '0')
 
 @dramatiq.actor
 def check_patroni_schedule():
+    print("Starting check...")
     try:
         # Load configurations from environment variables
         IPs = os.getenv('IPS').split(',')
@@ -89,7 +94,7 @@ def check_patroni_schedule():
             try:
                 response = requests.get(endpoint)
                 data = json.loads(response.text)
-                if data is None or data['state'] == 'stopped' :
+                if data is None or data['state'] != 'running' :
                     failover_IPs.append(IP)
                     print(f"STOPPED: {IP}")
                 else:
@@ -101,5 +106,13 @@ def check_patroni_schedule():
         if len(failover_IPs) > 0:
             restart_patroni_node.send(",".join(failover_IPs))
         print("================================")
+    except Exception as e:
+        print("Server Error: ", e)
+
+@dramatiq.actor
+def initial_cluster(extra_vars = None):
+    print("Creating cluster...")
+    try:
+        run_ansible_playbook(playbook_path, extra_vars, inventory_path, remote_user, tags, None)
     except Exception as e:
         print("Server Error: ", e)

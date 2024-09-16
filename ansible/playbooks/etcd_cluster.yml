@@ -1,0 +1,8 @@
+---
+
+- hosts: etcd_cluster
+  become: true
+  tags:
+    - etcd_cluseter
+  roles:
+    - ../roles/etcd_cluster
