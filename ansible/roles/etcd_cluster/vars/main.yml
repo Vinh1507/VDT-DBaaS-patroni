@@ -1,0 +1,2 @@
+ETCD_INITIAL_CLUSTER_TOKEN: "my-etcd"
+ETCD_INITIAL_CLUSTER: "etcd-node1=http://192.168.144.146:2380,etcd-node2=http://192.168.144.149:2380,etcd-node3=http://192.168.144.136:2380"

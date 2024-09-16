@@ -1,0 +1,8 @@
+---
+
+- hosts: patroni_cluster
+  become: true
+  tags:
+    - patroni_remove_node
+  roles:
+    - ../roles/patroni_remove_node

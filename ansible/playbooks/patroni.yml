@@ -8,5 +8,7 @@
     - patroni
   roles:
     # - ../roles/common
-    - ../roles/patroni_v2
+    - ../roles/patroni
     - ../roles/pgbouncer
+    - ../roles/monitoring
+    
