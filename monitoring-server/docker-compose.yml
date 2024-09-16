@@ -23,6 +23,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
+    # admin/15072002
 
   alertmanager:
     image: prom/alertmanager:latest

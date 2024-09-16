@@ -1,0 +1,20 @@
+groups:
+  - name: patroni_alerts
+    rules:
+      - alert: PatroniPostgresNotRunning
+        expr: patroni_postgres_running == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Postgres is not running on {{ $labels.name }}"
+          description: "Postgres on node {{ $labels.name }} (scope: {{ $labels.scope }}) is not running for more than 1 minute."
+
+      - alert: PatroniFailoverDetected
+        expr: changes(patroni_primary[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Failover detected in Patroni"
+          description: "A failover has occurred in the Patroni cluster (scope: {{ $labels.scope }}). Leader has changed in the last 5 minutes."
