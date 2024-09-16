@@ -29,8 +29,15 @@ Note:
 - backup stdin.out.err streams
 
 ## Kiến trúc hệ thống
-![alt text](../images/report-5/architecture_v2.png)
 
+Kiến trúc:
+![alt text](../images/report-5/architecture_v3.png)
+
+Openstack:
+![alt text](../images/report-5/architecture_v3_openstack.png)
+
+Các service liên quan:
+![alt text](../images/report-5/architecture_v3_service.png)
 ### Các thành phần của kiến trúc:
 
 - Etcd cluster: Một nhóm các máy chủ etcd hoạt động cùng nhau để cung cấp lưu trữ phân tán, nhất quán và có khả năng chịu lỗi. Etcd là một kho khóa-giá trị phân tán. Patroni sử dụng etcd như một kho lưu trữ phân tán để quản lý trạng thái của cụm PostgreSQL và điều phối các hành động như chuyển đổi vai trò leader khi có sự cố
@@ -114,3 +121,19 @@ Trong đó:
 
     + [POST] /clusters/:clusterId/switchover
 
+## Monitoring
+
+1. Prometheus Targets
+
+![alt text](../images/report-5/monitor_targets.png)
+
+2. Node Exporter:
+![alt text](../images/report-5/monitor_node_exporter.png)
+
+3. Postgres Patroni:
+![alt text](../images/report-5/monitor_patroni.png)
+
+4. Cảnh báo về Telegram khi có failover xảy ra
+
+![alt text](../images/report-5/monitor_failover_firing.png)
+![alt text](../images/report-5/monitor_failover_tele.png)

@@ -16,7 +16,7 @@ from datetime import datetime
 # Load environment variables from .env file
 load_dotenv()
 client = redis.Redis(host='localhost', port=6379, db=0)
-playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni_v2.yml'
+playbook_path = '/home/vinh/Documents/postgresql-high-availability/ansible/playbooks/patroni.yml'
 inventory_path = '/home/vinh/Documents/postgresql-high-availability/ansible/inventory.ini'
 remote_user = 'simone'
 tags = ["patroni"]
