@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y wget && \
     chmod +x /usr/local/bin/confd
 
 # Copy confd configuration and templates
-COPY confd /etc/confd
+# COPY confd /etc/confd
 
 # Copy HAProxy configuration file
 COPY haproxy.cfg /etc/haproxy/haproxy.cfg
@@ -24,4 +24,4 @@ ENV ETCDCTL_API=3
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # HAProxy default command
-CMD ["haproxy", "-f", "/etc/haproxy/haproxy.cfg", "-p", "/var/run/haproxy.pid", "-D"]
+# CMD ["haproxy", "-f", "/etc/haproxy/haproxy.cfg", "-p", "/var/run/haproxy.pid", "-D"]
