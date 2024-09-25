@@ -1,0 +1,22 @@
+version: '3'
+services:
+  {{ hostvars[inventory_hostname]['name'] }}:
+    image: quay.io/coreos/etcd:v3.5.0
+    container_name: {{ hostvars[inventory_hostname]['name'] }}
+    environment:
+      # - ETCD_NAME={{ hostvars[inventory_hostname]['name'] }}
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://{{ hostvars[inventory_hostname]['ansible_host'] }}:2380
+      - ETCD_ADVERTISE_CLIENT_URLS=http://{{ hostvars[inventory_hostname]['ansible_host'] }}:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_INITIAL_CLUSTER={{ ETCD_INITIAL_CLUSTER }}
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_INITIAL_CLUSTER_TOKEN={{ ETCD_INITIAL_CLUSTER_TOKEN }}
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    volumes:
+      - etcd-data:/etcd-data
+
+volumes:
+  etcd-data:

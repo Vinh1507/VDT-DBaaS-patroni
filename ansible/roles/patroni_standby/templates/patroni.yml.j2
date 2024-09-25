@@ -57,10 +57,12 @@ bootstrap:
     maximum_lag_on_failover: 1048576
 #    primary_start_timeout: 300
 #    synchronous_mode: false
-    #standby_cluster:
-      #host: 127.0.0.1
-      #port: 1111
-      #primary_slot_name: patroni
+    standby_cluster:
+      host: 192.168.144.1
+      port: 7001
+      # primary_slot_name: patroni
+      create_replica_methods:
+      - basebackup
     postgresql:
       use_pg_rewind: true
       pg_hba:
@@ -77,12 +79,12 @@ bootstrap:
 #        hot_standby: "on"
         password_encryption: md5
         max_connections: 100
-        archive_mode: 'on'
-        archive_command: pgbackrest --stanza=demo8 archive-push %p
-        archive_timeout: 60s
-        recovery_conf:
-          recovery_target_timeline: latest
-          restore_command: pgbackrest --stanza=demo8 archive-get %f "%p"
+        # archive_mode: 'on'
+        # archive_command: pgbackrest --stanza=demo8 archive-push %p
+        # archive_timeout: 60s
+        # recovery_conf:
+        #   recovery_target_timeline: latest
+        #   restore_command: pgbackrest --stanza=demo8 archive-get %f "%p"
 #        max_worker_processes: 8
 #        wal_keep_segments: 8
 #        max_wal_senders: 10

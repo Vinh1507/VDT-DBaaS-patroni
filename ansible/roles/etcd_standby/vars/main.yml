@@ -1,0 +1,2 @@
+ETCD_INITIAL_CLUSTER_TOKEN: "my-etcd-standby"
+ETCD_INITIAL_CLUSTER: "default=http://192.168.144.133:2380"
