@@ -9,7 +9,9 @@ services:
       - "5000:5000"
       - "5001:5001"
       - "7000:7000"
+      - "7001:7001"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./confd:/etc/confd
     environment:
       ETCD_URL: http://etcd:2379

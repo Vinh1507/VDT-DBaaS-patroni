@@ -1,0 +1,31 @@
+- name: Check if docker-compose.yml exists
+  stat:
+    path: /etcd_standby/docker-compose.yml
+  register: compose_file
+
+- name: Run Docker Compose Down
+  shell: sudo docker compose down
+  args:
+    chdir: /etcd_standby
+  when: compose_file.stat.exists
+    
+- name: Remove directory etcd_standby
+  file:
+    path: /etcd_standby           
+    state: absent
+
+- name: Create directory etcd_standby  
+  file:
+    path: /etcd_standby       
+    state: directory
+    mode: '0755'
+    
+- name: Render Docker Compose template
+  template:
+    src: docker-compose.yml.j2
+    dest: /etcd_standby/docker-compose.yml
+
+- name: Run Docker Compose Up
+  shell: sudo docker compose up -d
+  args:
+    chdir: /etcd_standby

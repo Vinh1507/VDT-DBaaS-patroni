@@ -1,0 +1,18 @@
+---
+
+- hosts: patroni_standby
+  become: true
+  tags:
+    - patroni_standby
+  roles:
+    # - ../roles/common
+    - ../roles/patroni_standby
+    - ../roles/pgbouncer
+    
+- hosts: etcd_standby
+  become: true
+  tags:
+    - etcd_standby
+  roles:
+    - ../roles/etcd_standby
+    
