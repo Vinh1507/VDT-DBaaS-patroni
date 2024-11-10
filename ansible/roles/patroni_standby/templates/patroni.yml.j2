@@ -1,4 +1,4 @@
-scope: {{ PATRONI_SCOPE }}
+scope: {{ PATRONI_SCOPE }}_standby
 namespace: /service/
 name: {{ hostvars[inventory_hostname]['name'] }}
 
@@ -58,7 +58,7 @@ bootstrap:
 #    primary_start_timeout: 300
 #    synchronous_mode: false
     standby_cluster:
-      host: 192.168.144.1
+      host: 192.168.144.146
       port: 7001
       # primary_slot_name: patroni
       create_replica_methods:

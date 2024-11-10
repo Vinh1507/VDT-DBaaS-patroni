@@ -1,3 +1,9 @@
+- name: Stop service PostgreSQL
+  ansible.builtin.service:
+    name: postgresql
+    state: stopped
+  ignore_errors: true
+
 - name: Check if docker-compose.yml exists
   stat:
     path: /patroni/docker-compose.yml
@@ -28,6 +34,12 @@
 - name: Copy custom_bootstrap.sh
   copy:
     src: custom_bootstrap.sh
+    dest: /patroni
+    mode: '0755'
+
+- name: Copy failover_hook.sh
+  copy:
+    src: failover_hook.sh
     dest: /patroni
     mode: '0755'
 

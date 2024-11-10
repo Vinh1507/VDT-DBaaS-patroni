@@ -9,10 +9,3 @@
     - ../roles/patroni_standby
     - ../roles/pgbouncer
     
-- hosts: etcd_standby
-  become: true
-  tags:
-    - etcd_standby
-  roles:
-    - ../roles/etcd_standby
-    

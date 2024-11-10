@@ -1,7 +1,4 @@
 ---
-
-
-
 - hosts: patroni_cluster
   become: true
   tags:

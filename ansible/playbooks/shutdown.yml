@@ -1,0 +1,7 @@
+---
+- hosts: patroni_cluster
+  become: true
+  tasks:
+    - name: Shut down the VM
+      ansible.builtin.shell: |
+        shutdown -h now

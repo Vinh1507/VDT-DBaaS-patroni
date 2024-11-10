@@ -22,6 +22,7 @@ services:
             - /patroni/postgres0.yml:/home/postgres/postgres0.yml
             - /patroni/pgbackrest.conf:/etc/pgbackrest.conf
             - /patroni/custom_bootstrap.sh:/etc/custom_bootstrap.sh
+            - /patroni/failover_hook.sh:/etc/failover_hook.sh
         command: ["postgres0.yml"]
         environment: 
             ETCDCTL_ENDPOINTS: http://192.168.144.146:2379,http://192.168.144.149:2379,http://192.168.144.136:2379

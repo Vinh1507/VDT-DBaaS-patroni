@@ -1,0 +1,23 @@
+---
+- hosts: patroni_cluster
+  become: true
+  tags:
+    - patroni
+  roles:
+    # - ../roles/common
+    - ../roles/patroni
+    - ../roles/pgbouncer
+    - ../roles/monitoring
+
+- hosts: haproxy_servers
+  become: true
+  roles:
+    - ../roles/haproxy
+    
+- hosts: patroni_standby
+  become: true
+  roles:
+    # - ../roles/common
+    - ../roles/patroni_standby
+    - ../roles/pgbouncer
+    

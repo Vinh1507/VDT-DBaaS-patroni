@@ -1,19 +1,43 @@
 ---
-- name: Install HAProxy
-  apt:
-    name: haproxy
-    state: present
+- name: Check if docker-compose.yml exists
+  stat:
+    path: /home/vinh/myhaproxy/docker-compose.yaml
+  register: compose_file
 
-- name: Copy HAProxy configuration file
+- name: Run Docker Compose Down
+  shell: docker compose down
+  args:
+    chdir: /home/vinh/myhaproxy
+  when: compose_file.stat.exists
+    
+- name: Remove directory myhaproxy
+  file:
+    path: /home/vinh/myhaproxy           
+    state: absent
+
+- name: Create directory myhaproxy  
+  file:
+    path: /home/vinh/myhaproxy       
+    state: directory
+    mode: '0755'
+
+- name: Copy . directory
   copy:
-    src: haproxy.cfg
-    dest: /etc/haproxy/haproxy.cfg
-    force: yes
-  changed_when: true
-  notify: restart haproxy
+    src: .
+    dest: /home/vinh/myhaproxy
 
-- name: Ensure HAProxy service is enabled and started
-  service:
-    name: haproxy
-    state: started
-    enabled: yes
+- name: Render entrypoint.sh
+  template:
+    src: entrypoint.sh.j2
+    dest: /home/vinh/myhaproxy/entrypoint.sh
+    mode: '0755'
+
+# - name: Render haproxy.toml
+#   template:
+#     src: conf.d/haproxy.toml.j2
+#     dest: /home/vinh/myhaproxy/conf.d/haproxy.toml
+
+- name: Run Docker Compose Up
+  shell: docker compose up -d
+  args:
+    chdir: /home/vinh/myhaproxy

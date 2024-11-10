@@ -1,0 +1,7 @@
+---
+
+- hosts: haproxy_servers
+  become: true
+  roles:
+    - ../roles/haproxy
+    

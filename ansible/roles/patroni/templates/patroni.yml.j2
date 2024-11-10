@@ -125,7 +125,9 @@ bootstrap:
 postgresql:
   listen: {{ PATRONI_POSTGRESQL_LISTEN }}
   connect_address: {{ hostvars[inventory_hostname]['ansible_host'] }}:5432
-
+  callbacks:
+    on_role_change: /etc/failover_hook.sh
+    # on_stop: /etc/failover_hook.sh
 #  proxy_address: 127.0.0.1:5433  # The address of connection pool (e.g., pgbouncer) running next to Patroni/Postgres. Only for service discovery.
   data_dir: {{ PATRONI_POSTGRESQL_DATA_DIR }}
   #  bin_dir:

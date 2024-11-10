@@ -10,7 +10,6 @@ services:
       - "5001:5001"
       - "7000:7000"
       - "7001:7001"
-    # command: ["confd", "-backend", "etcdv3", "-node", "http://192.168.144.146:2379", "-interval", "10"]
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

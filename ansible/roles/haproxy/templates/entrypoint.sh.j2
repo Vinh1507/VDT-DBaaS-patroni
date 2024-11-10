@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+confd -backend etcdv3 -node "{{ ETCD_NODES }}" -interval 2 -prefix {{ ETCD_PATRONI_CLUSTER_PREFIX }}

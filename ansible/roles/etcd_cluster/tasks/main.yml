@@ -1,3 +1,9 @@
+- name: Stop service etcd
+  ansible.builtin.service:
+    name: etcd
+    state: stopped
+  ignore_errors: true
+
 - name: Check if docker-compose.yml exists
   stat:
     path: /etcd_cluster/docker-compose.yml

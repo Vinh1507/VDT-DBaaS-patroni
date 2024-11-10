@@ -5,7 +5,7 @@ scheduler = BlockingScheduler()
 
 @scheduler.scheduled_job('interval', seconds=10)
 def scheduled_task():
-    print_message.send("Hello from the scheduler 12!")
+    print_message.send("Checking")
     check_patroni_schedule.send()
 
 if __name__ == "__main__":
